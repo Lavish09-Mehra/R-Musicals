@@ -1,0 +1,340 @@
+
+@import "tailwindcss";
+
+:root {
+  --hdr-bg: #0d0d0d;
+  --hdr-bg-2: #141414;
+  --hdr-line: rgba(255, 255, 255, 0.08);
+  --hdr-ink: #f4f4f5;
+  --hdr-ink-soft: #9b9ba3;
+  --hdr-accent: #242424;          /* charcoal — replaces the old orange */
+  --hdr-accent-2: #2c2c2c;
+  --hdr-accent-grad: linear-gradient(135deg, #242424 0%, #2f2f2f 100%);
+  --hdr-h: 76px;
+  --hdr-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --hdr-font: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+.hdr {
+  position: static;               /* sits in flow — does NOT follow on scroll */
+  z-index: 60;
+  height: var(--hdr-h);
+  font-family: var(--hdr-font);
+  color: var(--hdr-ink);
+  background:
+    radial-gradient(120% 140% at 50% -40%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+    linear-gradient(180deg, var(--hdr-bg-2) 0%, var(--hdr-bg) 100%);
+  backdrop-filter: saturate(140%) blur(12px);
+  -webkit-backdrop-filter: saturate(140%) blur(12px);
+  border-bottom: 1px solid var(--hdr-line);
+  transition: height 0.35s var(--hdr-ease), background 0.4s var(--hdr-ease),
+    box-shadow 0.4s var(--hdr-ease);
+}
+
+/* shrink + solidify once the user scrolls */
+.hdr.is-scrolled {
+  --hdr-h: 60px;
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+.hdr-inner {
+  height: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2rem);
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 1.75rem);
+}
+
+/* --------------------------------------------------------------------------
+   Brand / logo — static, non-draggable, no wordmark
+   -------------------------------------------------------------------------- */
+.hdr-brand {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  text-decoration: none;
+  color: var(--hdr-ink);
+}
+
+.hdr-brand img {
+  height: 62px;
+  width: auto;                        /* 2.69:1 → ~166px wide */
+  max-width: 260px;
+  object-fit: contain;
+  object-position: left center;
+  border-radius: 14px;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;              /* truly static — no grab cursor / drag */
+  transition: transform 0.5s var(--hdr-ease), filter 0.4s var(--hdr-ease);
+}
+.hdr.is-scrolled .hdr-brand img { height: 52px; }
+.hdr-brand:hover img {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.18));
+}
+
+/* --------------------------------------------------------------------------
+   Nav links — sliding underline on hover
+   -------------------------------------------------------------------------- */
+.hdr-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.25rem, 1vw, 0.5rem);
+  margin-inline: auto;               /* centers the buttons in leftover space */
+}
+
+.hdr-link {
+  position: relative;
+  padding: 0.5rem 0.85rem;
+  border-radius: 10px;
+  font-size: 0.94rem;
+  font-weight: 500;
+  color: var(--hdr-ink-soft);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.3s var(--hdr-ease), background 0.3s var(--hdr-ease),
+    transform 0.3s var(--hdr-ease);
+}
+.hdr-link::after {
+  content: "";
+  position: absolute;
+  left: 0.85rem;
+  right: 0.85rem;
+  bottom: 0.28rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--hdr-accent-grad);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--hdr-ease);
+}
+.hdr-link:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+.hdr-link:hover::after { transform: scaleX(1); }
+.hdr-link:active { transform: translateY(1px); }
+
+/* active route */
+.hdr-link.is-active { color: #fff; }
+.hdr-link.is-active::after { transform: scaleX(1); }
+
+/* --------------------------------------------------------------------------
+   Search box
+   -------------------------------------------------------------------------- */
+.hdr-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 0 1 400px;                   /* fixed-ish width, sits LEFT after logo */
+  min-width: 0;
+  margin-inline: 0.5rem 0;
+}
+.hdr-search svg.hdr-search-icon {
+  position: absolute;
+  inset-inline-start: 14px;
+  color: var(--hdr-ink-soft);
+  pointer-events: none;
+  transition: color 0.3s var(--hdr-ease);
+}
+.hdr-search input {
+  width: 100%;
+  height: 42px;
+  padding-inline: 42px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--hdr-line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--hdr-ink);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.3s var(--hdr-ease), background 0.3s var(--hdr-ease),
+    box-shadow 0.3s var(--hdr-ease);
+}
+.hdr-search input::placeholder { color: #6b6b73; }
+.hdr-search input:focus {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+}
+.hdr-search:focus-within svg.hdr-search-icon { color: var(--hdr-ink); }
+
+/* --------------------------------------------------------------------------
+   Actions (account / burger)
+   -------------------------------------------------------------------------- */
+.hdr-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  /* nav centers itself via `margin-inline: auto`; actions just pin right after it */
+}
+
+.hdr-iconbtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--hdr-ink-soft);
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.3s var(--hdr-ease), background 0.3s var(--hdr-ease),
+    border-color 0.3s var(--hdr-ease), transform 0.25s var(--hdr-ease);
+}
+.hdr-iconbtn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--hdr-line);
+  transform: translateY(-2px);
+}
+.hdr-iconbtn:active { transform: translateY(0) scale(0.94); }
+
+/* Login button — Uiverse "btn2" wipe-reveal, scaled for the navbar.
+   Sharp white outline + charcoal fill that retracts upward on hover
+   (top band scales out a beat later), leaving just the outline.
+   Fill is inset to the padding box so the white border stays crisp. */
+.hdr-login {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem 1.05rem;
+  border: 2px solid #ffffff;
+  border-radius: 0;                 /* btn2 is sharp-cornered */
+  background-color: transparent;
+  color: #fefefe;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+/* charcoal fill — covers the interior, wipes upward on hover */
+.hdr-login::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--hdr-accent);   /* #242424 (source used #212121) */
+  transform: scaleY(1);
+  transition: 0.3s ease-out;
+  z-index: 1;
+}
+
+/* upper band — lingers, then scales out sideways for a two-phase reveal */
+.hdr-login::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 12px);             /* source used -50px; scaled for navbar */
+  background-color: var(--hdr-accent);
+  transform: scaleX(1);
+  transition: 0.3s ease-out;
+  z-index: 1;
+}
+
+.hdr-login:hover::before {
+  transform: translateY(-25px);
+  height: 0;
+}
+.hdr-login:hover::after {
+  transform: scaleX(0);
+  transition-delay: 0.15s;
+}
+.hdr-login:hover {
+  border-color: #fefefe;
+}
+.hdr-login:active {
+  transform: translateY(1px);
+}
+
+/* keep the icon + label above the fill layers */
+.hdr-login svg,
+.hdr-login span {
+  position: relative;
+  z-index: 3;
+}
+
+/* --------------------------------------------------------------------------
+   Hamburger (mobile only)
+   -------------------------------------------------------------------------- */
+.hdr-burger { display: none; }
+
+/* --------------------------------------------------------------------------
+   Mobile slide-down menu
+   -------------------------------------------------------------------------- */
+.hdr-mobile {
+  position: fixed;
+  inset-inline: 0;
+  top: var(--hdr-h);
+  z-index: 55;
+  background: linear-gradient(180deg, #141414 0%, #0d0d0d 100%);
+  border-bottom: 1px solid var(--hdr-line);
+  box-shadow: 0 24px 40px -20px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition: grid-template-rows 0.4s var(--hdr-ease), opacity 0.35s var(--hdr-ease),
+    visibility 0.35s;
+}
+.hdr-mobile.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+}
+.hdr-mobile > div { overflow: hidden; min-height: 0; }
+.hdr-mobile-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 1.5rem;
+  color: var(--hdr-ink-soft);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  transition: color 0.25s var(--hdr-ease), background 0.25s var(--hdr-ease),
+    padding-inline-start 0.25s var(--hdr-ease);
+}
+.hdr-mobile-link:hover,
+.hdr-mobile-link.is-active {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  padding-inline-start: 1.85rem;
+}
+.hdr-mobile-link.is-active svg { color: var(--hdr-ink); }
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .hdr-nav, .hdr-search { display: none; }
+  .hdr-burger { display: inline-flex; }
+}
+@media (max-width: 480px) {
+  .hdr-login span { display: none; }
+  .hdr-login { padding-inline: 0.75rem; }
+}
+
+/* respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

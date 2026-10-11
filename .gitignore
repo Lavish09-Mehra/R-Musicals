@@ -1,0 +1,90 @@
+# =============================================================================
+#  Guitar Cart — root .gitignore (covers backend/ + frontend/ + Map/)
+# =============================================================================
+
+# ----------------------------- Dependencies ---------------------------------
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ------------------------- Environment / secrets ----------------------------
+# NEVER commit real credentials (MONGO_URL, JWT_SECRET, refresh secret, …)
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+*.p12
+*.pfx
+
+# ------------------------------ Build output --------------------------------
+dist/
+build/
+dist-ssr/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+.turbo/
+
+# ------------------------- Logs & coverage/reporting ------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+coverage/
+*.lcov
+.nyc_output/
+
+# --------------------------- Tooling / caches -------------------------------
+.vite/
+.angular/
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+node_modules/.tmp/
+node_modules/.cache/
+
+# --------------------------- OS / editor noise ------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*~
+
+# --------------------------- Local / misc -----------------------------------
+*.local
+.vercel
+.netlify
+.firebase
+.svelte-kit/
+
+# --------------------------- Local seeders ----------------------------------
+# Contains a hardcoded plaintext password — do NOT commit
+backend/createOwner.js
+createOwner.js
