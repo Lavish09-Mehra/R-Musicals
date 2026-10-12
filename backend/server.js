@@ -11,6 +11,7 @@ import { auth } from './Routers/auth.js';
 import { LogIN } from './Routers/login.js';
 import { cart } from './Routers/cart.js';
 import { wishlist } from './Routers/wishlist.js';
+import { inventory } from './Routers/Inventory.js';
 
 
 const app = express();
@@ -38,4 +39,5 @@ app.use(cart);
 app.use(wishlist);
 app.use(order);
 app.use(user);
+app.use(inventory);
 app.use(auth);

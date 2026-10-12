@@ -18,10 +18,16 @@ const respondWithCart = async (res, statusCode, message, cartDoc) => {
             ? prod.price - (prod.price * (prod.discount || 0) / 100)
             : 0;
 
+        // live stock info so the UI can flag items that sold out while
+        // sitting in the cart (additive fields — nothing removed)
+        const availableStock = prod ? (prod.stock ?? 0) : 0;
+
         return {
             ...item.toObject(),
             finalPrice,
-            itemTotal: finalPrice * item.quantity
+            itemTotal: finalPrice * item.quantity,
+            availableStock,
+            inStock: item.quantity <= availableStock
         };
     });
 
@@ -65,22 +71,41 @@ cart.post('/api/cart', verifyToken, async (req, res) => {
             });
         }
 
+        // adding to the cart NEVER reserves stock — availability is only
+        // checked here and revalidated at checkout. Never trust a quantity
+        // or price sent by the frontend: stock always comes from the DB.
+        const availableStock = FindProduct.stock ?? 0;
+        if (availableStock < 1) {
+            return res.status(409).json({
+                message: `😕 "${FindProduct.name}" is out of stock right now.`
+            });
+        }
+
         let FindCart = await Cart.findOne({ user });
+
+        // when the product is already in the cart, the NEW TOTAL quantity
+        // (existing + requested) must fit within the available stock
+        const ExistingItem = FindCart?.items.find(
+            item => item.product.toString() === product
+        );
+        const quantityInCart = ExistingItem ? ExistingItem.quantity : 0;
+
+        if (quantityInCart + quantity > availableStock) {
+            return res.status(409).json({
+                message: `🧺 Only ${availableStock} unit(s) of "${FindProduct.name}" are in stock${quantityInCart ? ` and you already have ${quantityInCart} in your cart` : ''}. Please lower the quantity.`
+            });
+        }
+
         if (!FindCart) {
             FindCart = new Cart({
                 user,
                 items: [{ product, quantity }]
             });
+        } else if (ExistingItem) {
+            // total = existing quantity + newly requested quantity
+            ExistingItem.quantity += quantity;
         } else {
-            const ExistingItem = FindCart.items.find(
-                item => item.product.toString() === product
-            );
-
-            if (ExistingItem) {
-                ExistingItem.quantity += quantity;
-            } else {
-                FindCart.items.push({ product, quantity });
-            }
+            FindCart.items.push({ product, quantity });
         }
         await FindCart.save();
 
@@ -145,6 +170,23 @@ cart.patch('/api/cart/:product_id', verifyToken, async (req, res) => {
                 message: '😕 That product is not in your cart.'
             });
         }
+
+        // same stock validation as adding — quantities can never exceed
+        // what is actually available right now
+        const FindProduct = await Products.findById(product_id);
+        if (!FindProduct) {
+            return res.status(404).json({
+                message: '😕 This product no longer exists. Please remove it from your cart.'
+            });
+        }
+
+        const availableStock = FindProduct.stock ?? 0;
+        if (quantity > availableStock) {
+            return res.status(409).json({
+                message: `🧺 Only ${availableStock} unit(s) of "${FindProduct.name}" are in stock. Please lower the quantity.`
+            });
+        }
+
         ExistingItem.quantity = quantity;
 
         await FindCart.save();

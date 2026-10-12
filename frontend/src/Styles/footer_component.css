@@ -1,0 +1,262 @@
+/* ==========================================================================
+   Guitar Cart — Footer (footer.tsx / HomePageFooter)
+   Mirrors header_component.css: #0D0D0D shell, #242424 accent, hairlines.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Tokens (scoped to .Footer so they never clash with eComm.css)
+   -------------------------------------------------------------------------- */
+.Footer {
+  --ftr-bg: #0d0d0d;
+  --ftr-bg-2: #141414;
+  --ftr-line: rgba(255, 255, 255, 0.08);
+  --ftr-ink: #f4f4f5;
+  --ftr-ink-soft: #9b9ba3;
+  --ftr-accent: #242424;
+  --ftr-accent-grad: linear-gradient(135deg, #242424 0%, #2f2f2f 100%);
+  --ftr-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ftr-font: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  position: relative;
+  font-family: var(--ftr-font);
+  color: var(--ftr-ink);
+  background:
+    radial-gradient(120% 120% at 50% 120%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+    linear-gradient(180deg, var(--ftr-bg-2) 0%, var(--ftr-bg) 100%);
+  border-top: 1px solid var(--ftr-line);   /* header uses border-bottom */
+  margin-top: auto;                        /* pin to bottom in a flex column page */
+}
+
+/* --------------------------------------------------------------------------
+   Top grid — brand | categories | quick links | contact  (max 1280, like .hdr-inner)
+   -------------------------------------------------------------------------- */
+.footer_inner {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding: clamp(2.5rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem) 2rem;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: clamp(2rem, 4vw, 3.5rem);
+}
+
+/* headings share one look */
+.footer_inner h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+.footer_inner h3 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ftr-ink);
+  margin-bottom: 1.1rem;
+}
+
+.footer_tag {
+  color: var(--ftr-ink);
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+}
+.footer_desc {
+  color: var(--ftr-ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.65;
+  max-width: 46ch;
+}
+
+/* --------------------------------------------------------------------------
+   Column links — sliding underline, same motion as .hdr-link
+   -------------------------------------------------------------------------- */
+.footer_links a,
+.footer_categories a,
+.footer_contact a:not(.footer_contact-btn) {
+  display: block;
+  position: relative;
+  width: fit-content;
+  padding: 0.4rem 0;
+  color: var(--ftr-ink-soft);
+  text-decoration: none;
+  font-size: 0.93rem;
+  transition: color 0.3s var(--ftr-ease), transform 0.3s var(--ftr-ease);
+}
+.footer_links a::after,
+.footer_categories a::after,
+.footer_contact a:not(.footer_contact-btn)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0.2rem;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--ftr-accent-grad);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ftr-ease);
+}
+.footer_links a:hover,
+.footer_categories a:hover,
+.footer_contact a:not(.footer_contact-btn):hover {
+  color: #fff;
+}
+.footer_links a:hover::after,
+.footer_categories a:hover::after,
+.footer_contact a:not(.footer_contact-btn):hover::after {
+  transform: scaleX(1);
+}
+
+.footer_categories p,
+.footer_contact p {
+  color: var(--ftr-ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  margin-bottom: 0.35rem;
+}
+
+/* Contact pill — outline style, echoes the header Login button */
+.footer_contact-btn {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 0.6rem 1.15rem;
+  border: 2px solid #ffffff;
+  border-radius: 0;
+  background: transparent;
+  color: #fefefe;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.3s var(--ftr-ease), color 0.3s var(--ftr-ease);
+}
+.footer_contact-btn:hover {
+  background: #f4f4f5;
+  color: #0d0d0d;
+}
+
+/* --------------------------------------------------------------------------
+   Socials — chips that lift on hover
+   -------------------------------------------------------------------------- */
+.footer_socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+}
+.footer_socials a {
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--ftr-line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ftr-ink-soft);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s var(--ftr-ease), background 0.3s var(--ftr-ease),
+    border-color 0.3s var(--ftr-ease), transform 0.25s var(--ftr-ease);
+}
+.footer_socials a:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   About band — hairline-separated, centered, muted
+   -------------------------------------------------------------------------- */
+.footer_msg {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding: 1.75rem clamp(1rem, 4vw, 2rem);
+  border-top: 1px solid var(--ftr-line);
+  text-align: center;
+}
+.footer_msg h3 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ftr-ink);
+  margin-bottom: 0.85rem;
+}
+.footer_msg p {
+  color: var(--ftr-ink-soft);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  max-width: 90ch;
+  margin: 0.4rem auto;
+}
+.footer_msg strong { color: var(--ftr-ink); }
+
+/* About-section buttons — same chip language as .footer_socials */
+.footer_msg-socials {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 1.1rem;
+}
+.footer_msg-socials a {
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--ftr-line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ftr-ink-soft);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s var(--ftr-ease), background 0.3s var(--ftr-ease),
+    border-color 0.3s var(--ftr-ease), transform 0.25s var(--ftr-ease);
+}
+.footer_msg-socials a:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   Bottom bar — split left/right, hairline on top
+   -------------------------------------------------------------------------- */
+.footer_bottom {
+  border-top: 1px solid var(--ftr-line);
+  background: rgba(0, 0, 0, 0.35);
+}
+.footer_bottom p {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding: 1.1rem clamp(1rem, 4vw, 2rem);
+  color: var(--ftr-ink-soft);
+  font-size: 0.85rem;
+}
+.footer_bottom p + p { padding-top: 0; }
+.footer_tagline {
+  color: var(--ftr-ink) !important;
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .footer_inner { grid-template-columns: 1fr 1fr; }
+  .footer_brand { grid-column: 1 / -1; }
+}
+@media (max-width: 560px) {
+  .footer_inner { grid-template-columns: 1fr; }
+  .footer_bottom p { text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

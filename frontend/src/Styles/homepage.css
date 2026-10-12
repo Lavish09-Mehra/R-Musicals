@@ -1,0 +1,130 @@
+/* ==========================================================================
+   R Musicals — Hero / Image Carousel (homepage.css)
+   Mirrors header_component.css: #0D0D0D shell, #242424 accent,
+   Inter UI, same easing.
+   Sliding: a flex TRACK holds all slides in a row; the track is
+   translated by -index*100% so slides move in true sequence.
+   ========================================================================== */
+
+:root {
+  --hro-inter: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --hro-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --hro-slide-ms: 900ms;
+}
+
+/* ── hero shell — fills the viewport below the static header ───────────── */
+.hero {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: calc(100vh - var(--hdr-h, 76px));
+  min-height: 540px;
+  background:
+    radial-gradient(120% 140% at 50% -40%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+    linear-gradient(180deg, #141414 0%, #0d0d0d 100%);
+  color: #f5f5f5;
+  font-family: var(--hro-inter);
+}
+
+/* ── the track: all slides side by side, moved as one ──────────────────── */
+.hero__track {
+  display: flex;
+  height: 100%;
+  transition: transform var(--hro-slide-ms) var(--hro-ease);
+  will-change: transform;
+}
+
+/* each slide takes exactly one viewport width — and is a real button:
+   clicking any slide (or pressing Enter on the active one) opens /products */
+.hero__slide {
+  flex: 0 0 100%;
+  min-width: 100%;
+  background-size: cover;
+  background-position: center;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.hero__slide:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: -8px;
+  border-radius: 8px;
+}
+
+/* ── scrim — keeps dots readable on any photo ──────────────────────────── */
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(0deg, rgba(13, 13, 13, 0.75) 0%, rgba(13, 13, 13, 0) 30%),
+    radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.35) 100%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ── plain dot navigation (no numbers) ─────────────────────────────────── */
+.hero__nav {
+  position: absolute;
+  inset-inline: 0;
+  bottom: clamp(1rem, 4vw, 2rem);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
+  z-index: 20;
+}
+
+/* button = generous hit target; the visible dot is its ::before */
+.hero__nav .dot {
+  all: unset;
+  width: 2.25rem;          /* ~36px hit target */
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.hero__nav .dot::before {
+  content: '';
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+  transition: background 0.2s var(--hro-ease), transform 0.2s var(--hro-ease);
+}
+.hero__nav .dot:hover::before {
+  background: rgba(255, 255, 255, 0.75);
+}
+.hero__nav .dot--active::before {
+  background: #f4f4f5;
+  transform: scale(1.3);
+}
+.hero__nav .dot:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+/* ── reduced motion: no sliding animation, no autoplay ─────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .hero__track {
+    transition: none;
+  }
+}
+
+/* ── small screens: tighter controls ───────────────────────────────────── */
+@media (max-width: 640px) {
+  .hero {
+    height: calc(100vh - var(--hdr-h, 76px));
+    min-height: 480px;
+  }
+  .hero__nav {
+    gap: 0.15rem;
+  }
+  .hero__nav .dot {
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+}

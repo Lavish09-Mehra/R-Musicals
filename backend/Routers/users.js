@@ -5,6 +5,7 @@ import { WishList } from '../Database/wishlist_Schema.js';
 import { Order } from '../Database/order_Schema.js';
 import { verifyToken } from '../Middleware/userAuth.js';
 import { verifyOwner } from '../Middleware/OwnerAuth.js';
+import { cancelOrderAndRestoreStock } from '../Utils/stock.js';
 export const user = express.Router()
 
 
@@ -77,11 +78,19 @@ user.delete('/api/user/:id/delete', verifyToken, async(req, res) => {
             });
         }
 
-        // cancel all active orders (PLACED / CONFIRMED)
-        const cancelledOrders = await Order.updateMany(
-            { user: id, orderStatus: { $in: ['PLACED', 'CONFIRMED'] } },
-            { $set: { orderStatus: 'CANCELLED' } }
-        );
+        // cancel all active orders (PLACED / CONFIRMED) and add their units
+        // back to stock EXACTLY ONCE — cancelOrderAndRestoreStock is guarded
+        // by the stockRestored flag, so this is safe even if repeated
+        const ActiveOrders = await Order.find({
+            user: id,
+            orderStatus: { $in: ['PLACED', 'CONFIRMED'] }
+        }).select('_id');
+
+        let cancelledCount = 0;
+        for (const activeOrder of ActiveOrders) {
+            const cancelled = await cancelOrderAndRestoreStock(activeOrder._id);
+            if (cancelled) cancelledCount++;
+        }
 
         // delete user's cart and wishlist
         await Cart.findOneAndDelete({ user: id });
@@ -92,7 +101,7 @@ user.delete('/api/user/:id/delete', verifyToken, async(req, res) => {
 
         return res.status(200).json({
             message: '✅ Account deleted successfully. We\'re sorry to see you go!',
-            cancelledOrders: cancelledOrders.modifiedCount,
+            cancelledOrders: cancelledCount,
             user: {
                 id: findUser._id,
                 name: findUser.name,
